@@ -100,7 +100,7 @@
                             <tbody>
                               <tr t-foreach="photos" t-as="photo">
                                 <td style="width:120px;">
-                                  <img class="img-thumbnail" t-att-src="'/web/image/tienda.foto.asset/%s/imagen_watermark' % photo.id" alt="Foto"/>
+                                  <img class="img-thumbnail" t-att-src="'/mi/fotoapp/photo/%s/thumb' % photo.id" alt="Foto"/>
                                 </td>
                                 <td style="min-width:220px;">
                                   <form method="post" class="d-flex gap-2 align-items-center flex-wrap">
@@ -207,7 +207,7 @@
                         <tbody>
                           <tr t-foreach="photos" t-as="photo">
                             <td style="width:100px;">
-                              <img class="img-thumbnail" t-att-src="'/web/image/tienda.foto.asset/%s/imagen_watermark' % photo.id" alt="Foto"/>
+                              <img class="img-thumbnail" t-att-src="'/mi/fotoapp/photo/%s/thumb' % photo.id" alt="Foto"/>
                             </td>
                             <td t-esc="photo.numero_dorsal or photo.id"/>
                             <td t-esc="photo.evento_id.name"/>

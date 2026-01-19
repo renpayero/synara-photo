@@ -347,9 +347,12 @@
               <div class="row">
                 <t t-foreach="photos" t-as="photo">
                   <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="card h-100 shadow-sm">
-                      <img class="card-img-top"
+                    <div class="card h-100 shadow-sm fotoapp-photo-card">
+                      <img class="card-img-top fotoapp-preview-trigger"
+                           style="cursor: zoom-in;"
                            t-att-src="'/web/image/tienda.foto.asset/%s/imagen_watermark' % photo.id"
+                           t-att-data-preview-src="'/web/image/tienda.foto.asset/%s/imagen_watermark' % photo.id"
+                           t-att-data-preview-alt="photo.name or (photo.numero_dorsal and ('Foto %s' % photo.numero_dorsal)) or album.name"
                            t-att-alt="photo.name or (photo.numero_dorsal and ('Foto %s' % photo.numero_dorsal)) or album.name"/>
                       <div class="card-body">
                         <p class="h6 mb-1" t-esc="photo.name or ('Foto %s' % (photo.numero_dorsal or photo.id))"/>
@@ -375,6 +378,108 @@
           </section>
         </div>
       </t>
+    </template>
+
+    <!-- Preview modal for public album images -->
+    <template id="fotoapp_gallery_preview_modal" inherit_id="website.layout" name="FotoApp gallery preview modal">
+      <xpath expr="//body" position="inside">
+        <div id="fotoappPreviewModal" class="modal fade" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content bg-dark">
+              <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+              <div class="modal-body d-flex justify-content-center align-items-center">
+                <div class="w-100 text-center">
+                  <img id="fotoappPreviewImg" class="img-fluid" style="max-height:80vh; object-fit:contain;" alt=""/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <style>
+          #fotoappPreviewModal .modal-body { background: #000; }
+          #fotoappPreviewImg { transition: transform 0.2s ease; cursor: zoom-in; }
+          #fotoappPreviewImg.fotoapp-zoomed { transform: scale(1.6); cursor: grab; }
+        </style>
+        <script><![CDATA[
+          (function () {
+            const triggerClass = 'fotoapp-preview-trigger';
+            const maxAttempts = 30;
+            let attempt = 0;
+            let initialized = false;
+
+            const cleanupZoom = (imgEl) => {
+              if (imgEl) { imgEl.classList.remove('fotoapp-zoomed'); }
+            };
+
+            const getModalAPI = (modalEl, imgEl) => {
+              if (window.bootstrap && window.bootstrap.Modal) {
+                const modal = new window.bootstrap.Modal(modalEl, { focus: true });
+                modalEl.addEventListener('hidden.bs.modal', () => cleanupZoom(imgEl));
+                return { show: () => modal.show() };
+              }
+              if (window.jQuery && window.jQuery.fn && window.jQuery.fn.modal) {
+                window.jQuery(modalEl).on('hidden.bs.modal', () => cleanupZoom(imgEl));
+                return { show: () => window.jQuery(modalEl).modal('show') };
+              }
+              return null;
+            };
+
+            const initHandlers = () => {
+              attempt += 1;
+
+              const modalEl = document.getElementById('fotoappPreviewModal');
+              const imgEl = document.getElementById('fotoappPreviewImg');
+              if (!modalEl || !imgEl) {
+                if (attempt < maxAttempts) { return false; }
+                return true;
+              }
+
+              const modal = getModalAPI(modalEl, imgEl);
+              if (!modal) {
+                if (attempt < maxAttempts) { return false; }
+                return true;
+              }
+
+              if (initialized) {
+                return true;
+              }
+
+              document.addEventListener('click', (ev) => {
+                const target = ev.target.closest('.' + triggerClass);
+                if (!target) { return; }
+                ev.preventDefault();
+                const src = target.getAttribute('data-preview-src');
+                if (!src) { return; }
+                imgEl.src = src;
+                imgEl.alt = target.getAttribute('data-preview-alt') || '';
+                cleanupZoom(imgEl);
+                modal.show();
+              });
+
+              imgEl.addEventListener('click', () => {
+                imgEl.classList.toggle('fotoapp-zoomed');
+              });
+
+              initialized = true;
+              return true;
+            };
+
+            const tryInit = () => {
+              if (initHandlers()) { return; }
+              if (attempt >= maxAttempts) { return; }
+              setTimeout(tryInit, 150);
+            };
+
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', tryInit);
+            } else {
+              tryInit();
+            }
+          })();
+        ]]></script>
+      </xpath>
     </template>
 
     <template id="gallery_category_create" name="Crear categoría">

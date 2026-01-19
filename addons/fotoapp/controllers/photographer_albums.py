@@ -1,3 +1,4 @@
+import base64
 import logging
 import os
 
@@ -142,6 +143,26 @@ class PhotographerAlbumsController(PhotographerPortalMixin, http.Controller):
                 return request.redirect(f"/mi/fotoapp/album/{album.id}")
             values['photos'] = album.asset_ids
         return request.render('fotoapp.photographer_album_detail', values)
+
+    @http.route(['/mi/fotoapp/photo/<int:photo_id>/thumb'], type='http', auth='user', website=True)
+    def photographer_photo_thumb(self, photo_id, **kwargs):
+        partner, denied = self._ensure_photographer()
+        if not partner:
+            return denied
+        photo = self._get_asset_for_partner(partner, photo_id)
+        if not photo:
+            return request.not_found()
+
+        image = photo.sudo().imagen_watermark or photo.sudo().imagen_original
+        if not image:
+            return request.not_found()
+
+        payload = base64.b64decode(image)
+        headers = [
+            ('Content-Type', 'image/png'),
+            ('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0'),
+        ]
+        return request.make_response(payload, headers)
 
     def _extract_upload_file_name(self, upload):
         filename = getattr(upload, 'filename', '') or ''

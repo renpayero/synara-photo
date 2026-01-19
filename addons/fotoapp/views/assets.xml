@@ -12,4 +12,11 @@
     <field name="path">/fotoapp/static/src/js/gallery_cart_badge.js</field>
     <field name="target">append</field>
   </record>
+
+  <record id="assets_frontend_gallery_preview" model="ir.asset">
+    <field name="name">FotoApp gallery preview modal</field>
+    <field name="bundle">website.assets_frontend</field>
+    <field name="path">/fotoapp/static/src/js/gallery_preview.js</field>
+    <field name="target">append</field>
+  </record>
 </odoo>

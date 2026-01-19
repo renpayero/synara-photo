@@ -17,7 +17,6 @@
             var emailInput = document.getElementById('fotoapp_guest_email');
             var payBtn = document.querySelector("button[name='o_payment_submit_button']");
             var errorEl = document.getElementById('fotoapp_email_error');
-            console.log('[FotoApp] guest email widget init', { emailInput: !!emailInput, payBtn: !!payBtn });
             if (!emailInput || !payBtn) { return; }
             var form = payBtn.closest('form')
               || document.querySelector('form#o_payment_form_tx')
@@ -25,7 +24,6 @@
               || document.querySelector('form.o_payment_form')
               || document.querySelector('form[action*="/shop/payment/transaction"]')
               || document.querySelector('form[action*="/payment/transaction"]');
-            console.log('[FotoApp] guest email form resolved', form);
 
             function isValidEmail(val) {
               return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val.trim());
@@ -50,26 +48,22 @@
                 existing.type = 'hidden';
                 existing.name = 'guest_email';
                 targetForm.appendChild(existing);
-                console.log('[FotoApp] created hidden guest_email input');
               }
               existing.value = emailInput.value.trim();
-              console.log('[FotoApp] synced hidden guest_email', existing.value);
             }
 
             function pushEmail() {
               var val = emailInput.value.trim();
               if (!isValidEmail(val)) { return; }
-              console.log('[FotoApp] pushing guest_email', val);
               fetch('/fotoapp/guest_email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: val })
-              }).then(function(resp){ console.log('[FotoApp] pushEmail response', resp && resp.status); }).catch(function(err){ console.warn('[FotoApp] pushEmail error', err); });
+              }).catch(function(){});
             }
 
             function wireForm(targetForm) {
               if (!targetForm) { return; }
-              console.log('[FotoApp] wiring form for guest email', targetForm);
               ensureHiddenEmail(targetForm);
               emailInput.addEventListener('input', function() {
                 ensureHiddenEmail(targetForm);
@@ -79,19 +73,16 @@
                 if (!toggle()) {
                   ev.preventDefault();
                   ev.stopPropagation();
-                  console.warn('[FotoApp] submit blocked, invalid email', emailInput.value);
                   return false;
                 }
                 ensureHiddenEmail(targetForm);
                 pushEmail();
-                console.log('[FotoApp] submit allowed with email', emailInput.value);
               });
             }
 
             if (form) {
               wireForm(form);
             } else {
-              console.warn('[FotoApp] payment form not found for guest email, waiting DOM');
               var observer = new MutationObserver(function() {
                 var lateForm = document.querySelector('form#o_payment_form_tx')
                   || document.querySelector('form#o_payment_form_pay')
@@ -100,7 +91,6 @@
                   || document.querySelector('form[action*="/payment/transaction"]');
                 if (lateForm) {
                   observer.disconnect();
-                  console.log('[FotoApp] late-found payment form', lateForm);
                   wireForm(lateForm);
                 }
               });
