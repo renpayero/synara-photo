@@ -14,3 +14,4 @@ from . import order_portal
 from . import manual_payment
 from . import checkout_guest
 from . import download
+from . import signup_terms

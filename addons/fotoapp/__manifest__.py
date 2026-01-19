@@ -18,6 +18,7 @@
     # any module necessary for this one to work correctly
     'depends': [
         'base',
+        'auth_signup',
         'product',
         'account',
         'website',
@@ -47,6 +48,7 @@
         'views/manual_payment_templates.xml',
         'views/checkout_guest_templates.xml',
         'views/checkout_guest_payment.xml',
+        'views/signup_terms_templates.xml',
         'views/payment_templates.xml',
         'views/res_config_settings_views.xml',
         'views/photographer_statement_views.xml',
