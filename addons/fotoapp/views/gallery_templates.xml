@@ -361,7 +361,7 @@
                         <p class="text-muted mb-3 mb-sm-2"><t t-esc="photo.precio"/> <t t-esc="photo.currency_id.symbol"/></p>
                         <form method="post" t-attf-action="/galeria/foto/#{ photo.id }/cart/add" class="d-grid fotoapp-add-to-cart">
                           <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                          <input type="hidden" name="redirect" t-att-value="'/galeria/evento/%s/album/%s' % (event.website_slug, album.id)"/>
+                          <input type="hidden" name="redirect" t-att-value="request.httprequest.url"/>
                           <button type="submit" class="btn btn-sm btn-primary">Agregar al carrito</button>
                         </form>
                       </div>
@@ -376,6 +376,65 @@
               </div>
             </div>
           </section>
+          <script><![CDATA[
+            (function () {
+              const qsAll = (sel) => Array.prototype.slice.call(document.querySelectorAll(sel));
+              const updateBadge = (qty) => {
+                const apply = (el) => {
+                  if (!el) { return; }
+                  if (qty > 0) {
+                    el.textContent = qty;
+                    el.classList.remove('d-none', 'o_hidden');
+                  } else {
+                    el.textContent = '';
+                    el.classList.add('d-none', 'o_hidden');
+                  }
+                };
+                qsAll('.my_cart_quantity, .o_cart_counter, [data-cart-quantity], .o_wsale_my_cart .badge, .o_wsale_my_cart span, [data-menu-xmlid*="sale.menu_sale_root"] .badge').forEach(apply);
+              };
+
+              const bind = () => {
+                if (window.__fotoappCartInlineBound) { return; }
+                window.__fotoappCartInlineBound = true;
+
+                document.addEventListener('submit', (ev) => {
+                  const form = ev.target.closest('form.fotoapp-add-to-cart');
+                  if (!form) { return; }
+                  ev.preventDefault();
+
+                  const action = form.getAttribute('action');
+                  const fd = new FormData(form);
+                  fd.append('ajax', '1');
+
+                  fetch(action, {
+                    method: 'POST',
+                    body: fd,
+                    credentials: 'same-origin',
+                  }).then(async (resp) => {
+                    let payload = null;
+                    try {
+                      payload = await resp.json();
+                    } catch (err) {
+                      payload = null;
+                    }
+                    const qty = payload && typeof payload.cart_qty !== 'undefined' ? payload.cart_qty : null;
+                    if (qty !== null) {
+                      window.website_sale_cart_quantity = qty;
+                      updateBadge(qty);
+                    }
+                  }).catch(() => {
+                    form.submit();
+                  });
+                });
+              };
+
+              if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', bind);
+              } else {
+                bind();
+              }
+            })();
+          ]]></script>
         </div>
       </t>
     </template>

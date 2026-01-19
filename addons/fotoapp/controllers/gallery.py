@@ -197,6 +197,7 @@ class FotoappGalleryController(http.Controller):
         if is_ajax:
             order = request.website.sale_get_order()
             qty = order.cart_quantity if order else 0
+            _logger.info('Fotoapp cart ajax add photo_id=%s order_id=%s qty=%s', photo_id, order.id if order else None, qty)
             return _json_response({'success': True, 'cart_qty': qty, 'message': success_msg, 'order_id': order.id if order else False})
         request.session['website_sale_cart_success'] = success_msg
         return request.redirect(referer)
