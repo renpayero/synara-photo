@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_project_milestone_form_inherit_payment" model="ir.ui.view">
+        <field name="name">project.milestone.form.payment</field>
+        <field name="model">project.milestone</field>
+        <field name="inherit_id" ref="project.project_milestone_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_mark_start_payment_paid" string="Marcar Pago Inicial como Pagado" type="object" class="oe_highlight" invisible="payment_status != 'to_pay'"/>
+                    <button name="action_mark_bonus_payment_paid" string="Marcar Bono como Pagado" type="object" class="oe_highlight" invisible="bonus_payment_status == 'paid' or bonus_payment_status == 'draft'"/>
+                </header>
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <group string="Pago y Bono" name="payment_group">
+                    <field name="project_id" required="1" readonly="id"/>
+                    <field name="user_id"/>
+                    <field name="milestone_amount"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="planned_date_start"/>
+                    <field name="planned_date_end"/>
+                    <field name="required_progress_percentage"/>
+                    <field name="bonus_percentage"/>
+                    <field name="total_milestone_cost"/>
+                </group>
+                <group string="Estado" name="status_group">
+                    <field name="total_planned_hours"/>
+                    <field name="total_effective_hours"/>
+                    <field name="progress_percentage" widget="progressbar"/>
+                    <field name="payment_status" widget="statusbar"/>
+                    <field name="bonus_payment_status" widget="statusbar"/>
+                </group>
+            </xpath>
+            <xpath expr="//sheet" position="after">
+                <chatter/>
+            </xpath>
+            <xpath expr="//group" position="after">
+                <notebook>
+                    <page string="Tareas" name="tasks_page">
+                        <button name="%(action_project_milestone_link_task)d" string="Vincular Tareas Existentes" type="action" class="btn-secondary mb-2" context="{'default_milestone_id': id}"/>
+                        <field name="task_ids" context="{'default_project_id': project_id}">
+                            <list string="Tareas">
+                                <field name="name"/>
+                                <field name="user_ids" widget="many2many_tags"/>
+                                <field name="state" widget="badge"/>
+                                <field name="allocated_hours" widget="timesheet_uom"/>
+                                <field name="effective_hours" widget="timesheet_uom"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_project_milestone_tree_payment" model="ir.ui.view">
+        <field name="name">project.milestone.tree.payment.standalone</field>
+        <field name="model">project.milestone</field>
+        <field name="arch" type="xml">
+            <list string="Objetivos" decoration-success="payment_status == 'paid'" decoration-info="payment_status == 'to_pay'">
+                <field name="project_id"/>
+                <field name="name"/>
+                <field name="deadline"/>
+                <field name="user_id" optional="show"/>
+                <field name="progress_percentage" widget="progressbar" optional="show"/>
+                <field name="payment_status" widget="badge" decoration-success="payment_status == 'paid'" decoration-info="payment_status == 'to_pay'" optional="show"/>
+                <field name="bonus_payment_status" widget="badge" decoration-success="bonus_payment_status == 'paid'" decoration-info="bonus_payment_status == 'to_pay'" optional="hide"/>
+                <field name="milestone_amount" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action for My Milestones -->
+    <record id="action_my_project_milestones" model="ir.actions.act_window">
+        <field name="name">Mis Objetivos</field>
+        <field name="res_model">project.milestone</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="view_id" ref="view_project_milestone_tree_payment"/>
+        <field name="domain">[('user_id', '=', uid)]</field>
+        <field name="context">{'default_user_id': uid}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No tienes objetivos asignados todavía.
+            </p>
+        </field>
+    </record>
+
+    <!-- Pivot View -->
+    <record id="view_project_milestone_pivot_payment" model="ir.ui.view">
+        <field name="name">project.milestone.pivot.payment</field>
+        <field name="model">project.milestone</field>
+        <field name="arch" type="xml">
+            <pivot string="Análisis de Objetivos" display_quantity="true">
+                <field name="project_id" type="row"/>
+                <field name="user_id" type="row"/>
+                <field name="payment_status" type="col"/>
+                <field name="milestone_amount" type="measure"/>
+                <field name="bonus_amount" type="measure"/>
+                <field name="total_milestone_cost" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Graph View -->
+    <record id="view_project_milestone_graph_payment" model="ir.ui.view">
+        <field name="name">project.milestone.graph.payment</field>
+        <field name="model">project.milestone</field>
+        <field name="arch" type="xml">
+            <graph string="Análisis de Objetivos" type="bar">
+                <field name="project_id"/>
+                <field name="milestone_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Action for All Milestones (Managers) -->
+    <record id="action_all_project_milestones" model="ir.actions.act_window">
+        <field name="name">Todos los Objetivos</field>
+        <field name="res_model">project.milestone</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="view_id" ref="view_project_milestone_tree_payment"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay objetivos registrados.
+            </p>
+        </field>
+    </record>
+
+    <!-- Search View for Reporting -->
+    <record id="view_project_milestone_search_payment" model="ir.ui.view">
+        <field name="name">project.milestone.search.payment</field>
+        <field name="model">project.milestone</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Objetivos">
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="user_id"/>
+                <filter string="Mis Objetivos" name="my_milestones" domain="[('user_id', '=', uid)]"/>
+                <filter string="A Pagar (Inicio)" name="to_pay_start" domain="[('payment_status', '=', 'to_pay')]"/>
+                <filter string="A Pagar (Bono)" name="to_pay_bonus" domain="[('bonus_payment_status', '=', 'to_pay')]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Proyecto" name="group_by_project" context="{'group_by': 'project_id'}"/>
+                    <filter string="Implementador" name="group_by_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Estado Pago Inicial" name="group_by_payment_status" context="{'group_by': 'payment_status'}"/>
+                    <filter string="Estado Pago Bono" name="group_by_bonus_payment_status" context="{'group_by': 'bonus_payment_status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Top Level Menu for Milestone Management -->
+    <menuitem id="menu_milestone_management_root"
+              name="Gestión de Objetivos"
+              parent="project.menu_main_pm"
+              sequence="5"/>
+
+    <menuitem id="menu_my_project_milestones"
+              name="Mis Objetivos"
+              parent="menu_milestone_management_root"
+              action="action_my_project_milestones"
+              sequence="1"/>
+
+    <menuitem id="menu_all_project_milestones"
+              name="Todos los Objetivos"
+              parent="menu_milestone_management_root"
+              action="action_all_project_milestones"
+              groups="project.group_project_manager"
+              sequence="2"/>
+</odoo>

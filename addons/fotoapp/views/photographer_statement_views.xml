@@ -1,0 +1,194 @@
+<odoo>
+  <data>
+    <record id="view_fotoapp_statement_tree" model="ir.ui.view">
+      <field name="name">fotoapp.photographer.statement.tree</field>
+      <field name="model">fotoapp.photographer.statement</field>
+      <field name="arch" type="xml">
+        <list string="Comisiones por fotógrafo" create="0" edit="0">
+          <field name="partner_id"/>
+          <field name="period_month"/>
+          <field name="period_start"/>
+          <field name="period_end"/>
+          <field name="sale_total"/>
+          <field name="commission_total"/>
+          <field name="payout_total"/>
+          <field name="sale_count"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="view_fotoapp_statement_form" model="ir.ui.view">
+      <field name="name">fotoapp.photographer.statement.form</field>
+      <field name="model">fotoapp.photographer.statement</field>
+      <field name="arch" type="xml">
+        <form string="Comisiones" create="0" edit="0">
+          <sheet>
+            <group>
+              <group>
+                <field name="partner_id" readonly="1"/>
+                <field name="period_month" readonly="1"/>
+                <field name="period_start" readonly="1"/>
+                <field name="period_end" readonly="1"/>
+              </group>
+              <group>
+                <field name="sale_total" readonly="1"/>
+                <field name="commission_total" readonly="1"/>
+                <field name="payout_total" readonly="1"/>
+                <field name="sale_count" readonly="1"/>
+              </group>
+            </group>
+            <notebook>
+              <page string="Detalle">
+                <field name="line_ids" nolabel="1" readonly="1" views="[(list, 'view_fotoapp_statement_line_tree')]"></field>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="view_fotoapp_statement_line_tree" model="ir.ui.view">
+      <field name="name">fotoapp.photographer.statement.line.list</field>
+      <field name="model">fotoapp.photographer.statement.line</field>
+      <field name="arch" type="xml">
+        <list string="Detalle de comisiones" create="0" edit="0" delete="0">
+          <field name="asset_id"/>
+          <field name="sale_amount"/>
+          <field name="commission_percent"/>
+          <field name="commission_amount"/>
+          <field name="net_amount"/>
+          <field name="customer_id"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="view_fotoapp_statement_search" model="ir.ui.view">
+      <field name="name">fotoapp.photographer.statement.search</field>
+      <field name="model">fotoapp.photographer.statement</field>
+      <field name="arch" type="xml">
+        <search string="Buscar comisiones">
+          <field name="partner_id"/>
+          <field name="period_month" string="Mes"/>
+          <field name="period_start"/>
+          <field name="period_end"/>
+          <group expand="0" string="Agrupar por">
+            <filter string="Fotógrafo" name="group_partner" context="{'group_by': 'partner_id'}"/>
+            <filter string="Mes" name="group_month" context="{'group_by': 'period_month'}"/>
+          </group>
+        </search>
+      </field>
+    </record>
+
+    <record id="view_fotoapp_statement_pivot" model="ir.ui.view">
+      <field name="name">fotoapp.photographer.statement.pivot</field>
+      <field name="model">fotoapp.photographer.statement</field>
+      <field name="arch" type="xml">
+        <pivot string="Comisiones" disable_linking="True">
+          <field name="partner_id" type="row"/>
+          <field name="period_month" type="col"/>
+          <field name="sale_total" type="measure"/>
+          <field name="commission_total" type="measure"/>
+          <field name="payout_total" type="measure"/>
+        </pivot>
+      </field>
+    </record>
+
+    <record id="view_fotoapp_statement_graph" model="ir.ui.view">
+      <field name="name">fotoapp.photographer.statement.graph</field>
+      <field name="model">fotoapp.photographer.statement</field>
+      <field name="arch" type="xml">
+        <graph string="Comisiones" type="bar">
+          <field name="period_month" type="row"/>
+          <field name="commission_total" type="measure"/>
+          <field name="partner_id" type="col"/>
+        </graph>
+      </field>
+    </record>
+
+    <record id="action_fotoapp_commissions" model="ir.actions.act_window">
+      <field name="name">Comisiones</field>
+      <field name="res_model">fotoapp.photographer.statement</field>
+      <field name="view_mode">list,form,pivot,graph</field>
+      <field name="search_view_id" ref="view_fotoapp_statement_search"/>
+      <field name="context">{"search_default_group_partner": 1, "search_default_group_month": 1}</field>
+    </record>
+
+    <menuitem id="menu_fotoapp_commissions" name="Comisiones" parent="menu_fotoapp_root" action="action_fotoapp_commissions" sequence="25" groups="base.group_user"/>
+
+    <record id="view_fotoapp_statement_generate_wizard" model="ir.ui.view">
+      <field name="name">fotoapp.photographer.statement.wizard.form</field>
+      <field name="model">fotoapp.photographer.statement.wizard</field>
+      <field name="arch" type="xml">
+        <form string="Generar comisiones" create="0" edit="0">
+          <sheet>
+            <group>
+              <field name="period_month"/>
+            </group>
+          </sheet>
+          <footer>
+            <button name="action_generate_statements" string="Generar" type="object" class="btn-primary"/>
+            <button string="Cerrar" class="btn-link" special="cancel"/>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_fotoapp_generate_commissions" model="ir.actions.act_window">
+      <field name="name">Actualizar comisiones</field>
+      <field name="res_model">fotoapp.photographer.statement.wizard</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+      <field name="view_id" ref="view_fotoapp_statement_generate_wizard"/>
+    </record>
+
+    <menuitem id="menu_fotoapp_generate_commissions" name="Generar comisiones" parent="menu_fotoapp_commissions" action="action_fotoapp_generate_commissions" sequence="1" groups="base.group_user"/>
+
+    <record id="view_fotoapp_real_time_sale_search" model="ir.ui.view">
+      <field name="name">sale.order.fotoapp.real.time.search</field>
+      <field name="model">sale.order</field>
+      <field name="arch" type="xml">
+        <search string="Ventas FotoApp">
+          <field name="fotoapp_photographer_id"/>
+          <field name="fotoapp_order_month" string="Mes"/>
+          <field name="date_order"/>
+          <filter name="fotoapp_photographer_assigned" string="Fotógrafo asignado" domain="[('fotoapp_photographer_id', '!=', False)]"/>
+          <filter name="fotoapp_confirmed" string="Confirmadas" domain="[('state', 'in', ['sale', 'done'])]"/>
+          <group expand="0" string="Agrupar por">
+            <filter name="group_fotoapp_photographer" string="Fotógrafo (FotoApp)" context="{'group_by': 'fotoapp_photographer_id'}"/>
+          </group>
+        </search>
+      </field>
+    </record>
+
+    <record id="view_fotoapp_real_time_sale_tree" model="ir.ui.view">
+      <field name="name">sale.order.fotoapp.real.time.tree</field>
+      <field name="model">sale.order</field>
+      <field name="arch" type="xml">
+      <list string="Ventas en tiempo real" create="0" edit="0" delete="0">
+        <field name="name"/>
+        <field name="partner_id"/>
+        <field name="fotoapp_photographer_id"/>
+        <field name="fotoapp_order_month"/>
+        <field name="date_order"/>
+
+        <field name="amount_total" sum="Total"/>
+        <field name="fotoapp_commission_percent"/>
+        <field name="fotoapp_platform_commission_amount" sum="Total"/>
+        <field name="fotoapp_photographer_amount" sum="Total"/>
+      </list>
+      </field>
+    </record>
+
+    <record id="action_fotoapp_realtime_sales" model="ir.actions.act_window">
+      <field name="name">Ventas en tiempo real</field>
+      <field name="res_model">sale.order</field>
+      <field name="view_mode">list</field>
+      <field name="view_id" ref="view_fotoapp_real_time_sale_tree"/>
+      <field name="search_view_id" ref="view_fotoapp_real_time_sale_search"/>
+      <field name="context">{'search_default_group_fotoapp_photographer': 1}</field>
+      <field name="domain">[('fotoapp_photographer_id', '!=', False), ('state', 'in', ['sale', 'done'])]</field>
+    </record>
+
+    <menuitem id="menu_fotoapp_realtime_sales" name="Ventas en tiempo real" parent="menu_fotoapp_commissions" action="action_fotoapp_realtime_sales" sequence="5" groups="base.group_user"/>
+  </data>
+</odoo>

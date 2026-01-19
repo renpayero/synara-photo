@@ -1,0 +1,3 @@
+pyOpenSSL
+httplib2>=0.7
+git+https://github.com/ingadhoc/pyafipws.git@odoo18

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_milestone_payment" model="ir.actions.report">
+        <field name="name">Milestone Payment Status</field>
+        <field name="model">project.milestone</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">SYNARA-project-bonuses.report_milestone_payment</field>
+        <field name="report_file">SYNARA-project-bonuses.report_milestone_payment</field>
+        <field name="binding_model_id" ref="project.model_project_milestone"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_milestone_payment">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Reporte de Pago de Objetivos</h2>
+                        <div class="row mt32 mb32">
+                            <div class="col-6">
+                                <strong>Proyecto:</strong> <span t-field="o.project_id"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Objetivo:</strong> <span t-field="o.name"/>
+                            </div>
+                        </div>
+                        <div class="row mt32 mb32">
+                            <div class="col-6">
+                                <strong>Asignado a:</strong> <span t-field="o.user_id"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Monto:</strong> <span t-field="o.milestone_amount"/>
+                            </div>
+                        </div>
+                        
+                        <h3>Estado</h3>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Ítem</th>
+                                    <th>Estado</th>
+                                    <th>Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Pago Inicial</td>
+                                    <td><span t-field="o.payment_status"/></td>
+                                    <td><span t-esc="o.milestone_amount"/></td>
+                                </tr>
+                                <tr>
+                                    <td>Pago de Bono</td>
+                                    <td><span t-field="o.bonus_payment_status"/></td>
+                                    <td><span t-esc="o.milestone_amount * (o.bonus_percentage / 100)"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="row mt32">
+                            <div class="col-12">
+                                <strong>Avance:</strong> <span t-field="o.progress_percentage"/>%
+                                <br/>
+                                <strong>Inicio Planificado:</strong> <span t-field="o.planned_date_start"/>
+                                <br/>
+                                <strong>Fecha de Finalización:</strong> <span t-field="o.deadline"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

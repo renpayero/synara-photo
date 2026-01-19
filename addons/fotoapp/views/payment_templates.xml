@@ -1,0 +1,63 @@
+<odoo>
+  <!-- Ajustes en el render de cada método de pago -->
+  <template id="fotoapp_payment_badge" inherit_id="payment.method_form" name="FotoApp MercadoPago badge">
+    <xpath expr="//div[@for='o_payment_radio']" position="inside">
+      <!-- Normaliza código y nombre del provider para detectar Mercado Pago -->
+      <t t-set="provider_code" t-value="(provider_sudo and provider_sudo._get_code()) or ''"/>
+      <t t-set="provider_name" t-value="(provider_sudo and provider_sudo.name) or ''"/>
+      <t t-set="is_mp" t-value="provider_code in ['mercadopago', 'mercadopago_checkout', 'mercado_pago', 'mercado-pago'] or ('mercado' in provider_name.lower())"/>
+    </xpath>
+
+    <!-- Badge verde para Mercado Pago -->
+    <xpath expr="//label[contains(@class, 'o_payment_option_label')]" position="after">
+      <t t-if="is_mp">
+        <span class="badge bg-success ms-2">Pago por Mercado Pago</span>
+      </t>
+    </xpath>
+
+    <!-- Reemplaza contenedor de logos: si es MP, no mostrar logos -->
+    <xpath expr="//div[contains(@class, 'gap-1') and contains(@class, 'flex-wrap') and contains(@class, 'd-flex')]" position="replace">
+      <t t-if="not is_mp">
+        <div class="gap-1 flex-wrap d-flex">
+          <t t-set="pm_index" t-value="0"/>
+          <t t-foreach="pms_to_display_sudo" t-as="pm_to_display_sudo">
+            <t t-if="pm_index &lt; 4" t-call="payment.form_logo">
+              <t t-set="logo_pm_sudo" t-value="pm_to_display_sudo"/>
+            </t>
+            <t t-set="pm_index" t-value="pm_index + 1"/>
+          </t>
+        </div>
+      </t>
+      <t t-if="is_mp">
+        <div class="gap-1 flex-wrap d-flex d-none" aria-hidden="true"/>
+      </t>
+    </xpath>
+  </template>
+
+  <!-- Mostrar la miniatura de la foto en la previsualización del carrito -->
+  <template id="fotoapp_cart_photo" inherit_id="website_sale.cart_lines" name="FotoApp cart photo thumbnail">
+    <!-- Reemplaza el contenedor de imagen de cada item del carrito -->
+    <xpath expr="//div[@id='cart_products']//div[contains(@t-attf-class, 'o_cart_product')]//div[@style]" position="replace">
+      <div style="width: 64px" class="me-3">
+        <t t-if="line.foto_asset_id">
+          <img t-att-src="'/web/image/tienda.foto.asset/%s/imagen_watermark' % line.foto_asset_id.id"
+               class="o_image_64_max img rounded"
+               t-att-alt="line.foto_asset_id.name or line.name_short"/>
+        </t>
+        <t t-elif="line._is_not_sellable_line() and line.product_id.image_128">
+          <img t-att-src="image_data_uri(line.product_id.image_128)"
+               class="o_image_64_max img rounded"
+               t-att-alt="line.name_short"/>
+        </t>
+        <t t-elif="line.product_id.image_128">
+          <div t-field="line.product_id.image_128"
+               t-options="{
+                 'widget': 'image',
+                 'qweb_img_responsive': False,
+                 'class': 'o_image_64_max rounded',
+               }"/>
+        </t>
+      </div>
+    </xpath>
+  </template>
+</odoo>

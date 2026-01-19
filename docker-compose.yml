@@ -1,0 +1,56 @@
+services:
+  odoo:
+    container_name: synara_web_photo
+    #image: odoo:18.0
+    #build: .
+    image: hcsinergia/synara-erp:v18.0
+    depends_on:
+      - db
+    ports:
+      - "10028:8069"
+      - "10029:8072"
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
+      - HOST=db
+      - USER=odoo
+      - PASSWORD=myodoo
+    volumes:
+      - synara-web-data-photo:/var/lib/odoo
+      - ./config:/etc/odoo
+      - ./addons:/mnt/extra-addons
+      - ./logs:/var/log/odoo
+      - ./GeoLite2:/etc/odoo/geoip:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    command: odoo #-d photo
+    restart: always
+
+  db:
+      container_name: synara_db_photo
+      image: postgres:17
+      environment:
+        - POSTGRES_DB=odoo
+        - POSTGRES_USER=odoo
+        - POSTGRES_PASSWORD=myodoo
+        - TZ=America/Argentina/Buenos_Aires
+        - PGTZ=America/Argentina/Buenos_Aires
+      ports:
+        - "5433:5432"
+      volumes:
+        - synara-db-data-photo:/var/lib/postgresql/data
+        - /etc/localtime:/etc/localtime:ro
+        - /etc/timezone:/etc/timezone:ro
+        - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      command: >
+        postgres
+        -c shared_buffers=2GB
+        -c effective_cache_size=5GB
+        -c work_mem=16MB
+        -c maintenance_work_mem=256MB
+      restart: always
+
+volumes:
+  synara-web-data-photo:
+    name: synara-erp-photo
+  synara-db-data-photo:
+    name: synara-db-photo

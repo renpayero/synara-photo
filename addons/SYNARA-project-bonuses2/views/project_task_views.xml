@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_task_form2_inherit_bonus" model="ir.ui.view">
+            <field name="name">project.task.form.bonus</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="arch" type="xml">
+                
+                <xpath expr="//header" position="inside">
+                    <button name="action_toggle_bonus_paid" 
+                            string="Marcar Pagado" 
+                            type="object" 
+                            class="oe_highlight" 
+                            invisible="x_final_bonus_payout == 0 or x_bonus_paid == True"/>
+                </xpath>
+
+                <xpath expr="//group" position="inside">
+                    <group string="Liquidación de Bonos">
+                        <field name="milestone_id" string="Objetivo"/>
+                        
+                        <field name="x_milestone_bonus_status" widget="badge"
+                               decoration-success="x_milestone_bonus_status == 'qualified'"
+                               decoration-danger="x_milestone_bonus_status == 'failed'"
+                               decoration-info="x_milestone_bonus_status == 'pending'"/>
+                        
+                        <field name="x_milestone_bonus_percentage" string="% Bono del Objetivo"/>
+                        
+                        <separator string="Detalle Económico"/>
+                        <field name="x_task_value"/>
+                        <field name="x_final_bonus_payout" widget="monetary" decoration-bf="1"/>
+                        <field name="x_bonus_paid" widget="boolean_toggle"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        
+        </data>
+</odoo>

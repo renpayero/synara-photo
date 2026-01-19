@@ -1,0 +1,14 @@
+<odoo>
+  <data noupdate="1">
+    <record id="ir_cron_fotoapp_commissions_monthly" model="ir.cron">
+      <field name="name">FotoApp - Comisiones mensuales</field>
+      <field name="model_id" ref="model_fotoapp_photographer_statement"/>
+      <field name="state">code</field>
+      <field name="code">model.cron_generate_monthly_commissions()</field>
+      <field name="interval_number">1</field>
+      <field name="interval_type">months</field>
+      <field name="active">True</field>
+      <field name="nextcall" eval="(DateTime.now() + relativedelta(months=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+    </record>
+  </data>
+</odoo>

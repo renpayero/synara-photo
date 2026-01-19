@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_synara_module_installer_wizard,synara.module.installer.wizard,model_synara_module_installer_wizard,base.group_system,1,1,1,1
+access_synara_module_installer_line,synara.module.installer.line,model_synara_module_installer_line,base.group_system,1,1,1,1
+access_synara_installation_log,synara.installation.log,model_synara_installation_log,base.group_system,1,1,1,1
+access_synara_installation_log_line,synara.installation.log.line,model_synara_installation_log_line,base.group_system,1,1,1,1

@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_project_milestone_user,project.milestone.user,model_project_milestone,project.group_project_user,1,1,1,1
+access_project_milestone_manager,project.milestone.manager,model_project_milestone,project.group_project_manager,1,1,1,1
+access_project_milestone_link_task_user,project.milestone.link.task.user,model_project_milestone_link_task,project.group_project_user,1,1,1,1

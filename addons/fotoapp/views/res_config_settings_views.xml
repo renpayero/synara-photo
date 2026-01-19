@@ -1,0 +1,152 @@
+<odoo>
+  <data>
+    <record id="view_res_config_settings_fotoapp_mp" model="ir.ui.view">
+      <field name="name">res.config.settings.view.form.inherit.fotoapp.mp</field>
+      <field name="model">res.config.settings</field>
+      <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//form[hasclass('oe_form_configuration')]" position="inside">
+          <div class="app_settings_block" string="Mercado Pago Marketplace" data-key="fotoapp_mp_marketplace">
+            <h2>Mercado Pago Marketplace</h2>
+            <p class="text-muted">
+              Completa las credenciales de tu aplicación de Mercado Pago para habilitar el flujo Marketplace / Split Payments.
+            </p>
+            <div class="row mt16 o_settings_container">
+              <div class="col-12 col-lg-6 o_setting_box">
+                <div class="o_setting_left">
+                  <span class="fa fa-plug" title="Client ID"/>
+                </div>
+                <div class="o_setting_right">
+                  <label for="fotoapp_mp_client_id" string="Client ID"/>
+                  <div class="text-muted">
+                    Copia el Client ID de tu aplicación de Mercado Pago.
+                  </div>
+                  <field name="fotoapp_mp_client_id" placeholder="APP-1234567890"/>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 o_setting_box">
+                <div class="o_setting_left">
+                  <span class="fa fa-key" title="Client Secret"/>
+                </div>
+                <div class="o_setting_right">
+                  <label for="fotoapp_mp_client_secret" string="Client Secret"/>
+                  <div class="text-muted">
+                    Se usa para intercambiar el código OAuth por tokens. Mantén este dato en secreto.
+                  </div>
+                  <field name="fotoapp_mp_client_secret" password="True" placeholder="APP-SECRET-..."/>
+                </div>
+              </div>
+              <div class="col-12 o_setting_box">
+                <div class="o_setting_left">
+                  <span class="fa fa-link" title="Redirect URI"/>
+                </div>
+                <div class="o_setting_right">
+                  <label for="fotoapp_mp_redirect_uri" string="Redirect URI"/>
+                  <div class="text-muted">
+                    Debe coincidir exactamente con la URL configurada en Mercado Pago. Ejemplo: https://miinstancia.com/fotoapp/mercadopago/oauth/callback
+                  </div>
+                  <field name="fotoapp_mp_redirect_uri" placeholder="https://miinstancia.com/fotoapp/mercadopago/oauth/callback"/>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 o_setting_box">
+                <div class="o_setting_left">
+                  <span class="fa fa-university" title="Diario"/>
+                </div>
+                <div class="o_setting_right">
+                  <label for="fotoapp_mp_gateway_journal_id" string="Diario de pagos"/>
+                  <div class="text-muted">
+                    Define el diario bancario donde quedarán asentados los cobros de Mercado Pago.
+                  </div>
+                  <field name="fotoapp_mp_gateway_journal_id" options="{'no_open': True}"/>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="app_settings_block" string="AFIP / Facturación" data-key="fotoapp_afip_settings">
+            <h2>AFIP y facturación electrónica</h2>
+            <p class="text-muted">
+              Conservá aquí los parámetros necesarios para homologación y producción con AFIP.
+            </p>
+            <div class="row mt16 o_settings_container">
+              <div class="col-12 col-lg-6 o_setting_box">
+                <div class="o_setting_left">
+                  <span class="fa fa-random" title="Modo"/>
+                </div>
+                <div class="o_setting_right">
+                  <label for="fotoapp_afip_environment" string="Modo AFIP"/>
+                  <div class="text-muted">Elegí si el entorno opera en homologación/testing o en producción.</div>
+                  <field name="fotoapp_afip_environment" widget="radio"/>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 o_setting_box">
+                <div class="o_setting_left">
+                  <span class="fa fa-building" title="Punto de venta"/>
+                </div>
+                <div class="o_setting_right">
+                  <label for="fotoapp_afip_pos_number" string="Punto de venta"/>
+                  <div class="text-muted">Número de punto de venta AFIP a utilizar.</div>
+                  <field name="fotoapp_afip_pos_number" placeholder="0001"/>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 o_setting_box">
+                <div class="o_setting_left">
+                  <span class="fa fa-file" title="Certificado"/>
+                </div>
+                <div class="o_setting_right">
+                  <label for="fotoapp_afip_certificate_attachment_id" string="Certificado (PEM)"/>
+                  <field name="fotoapp_afip_certificate_attachment_id" options="{'no_create_edit': False}"/>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 o_setting_box">
+                <div class="o_setting_left">
+                  <span class="fa fa-lock" title="Clave"/>
+                </div>
+                <div class="o_setting_right">
+                  <label for="fotoapp_afip_private_key_attachment_id" string="Clave privada (PEM)"/>
+                  <field name="fotoapp_afip_private_key_attachment_id" options="{'no_create_edit': False}"/>
+                </div>
+              </div>
+              <div class="col-12 o_setting_box">
+                <div class="o_setting_left">
+                  <span class="fa fa-key" title="Passphrase"/>
+                </div>
+                <div class="o_setting_right">
+                  <label for="fotoapp_afip_passphrase" string="Passphrase"/>
+                  <field name="fotoapp_afip_passphrase" password="True" placeholder="Opcional"/>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="app_settings_block" string="Ciclo de vida de fotos" data-key="fotoapp_asset_lifecycle">
+            <h2>Ciclo de vida de fotos</h2>
+            <p class="text-muted">
+              Definí cuánto tiempo permanecen publicadas las fotos sin ventas y cuándo se eliminan si permanecen archivadas.
+            </p>
+            <div class="row mt16 o_settings_container">
+              <div class="col-12 col-lg-6 o_setting_box">
+                <div class="o_setting_left">
+                  <span class="fa fa-clock-o" title="Archivado"/>
+                </div>
+                <div class="o_setting_right">
+                  <label for="fotoapp_asset_archive_days" string="Archivar tras (días sin compras)"/>
+                  <div class="text-muted">Cantidad de días desde la última publicación o venta para archivar la foto.</div>
+                  <field name="fotoapp_asset_archive_days" min="1"/>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6 o_setting_box">
+                <div class="o_setting_left">
+                  <span class="fa fa-trash" title="Eliminación"/>
+                </div>
+                <div class="o_setting_right">
+                  <label for="fotoapp_asset_delete_days" string="Eliminar tras (días archivada)"/>
+                  <div class="text-muted">Plazo para borrar definitivamente una foto si sigue archivada.</div>
+                  <field name="fotoapp_asset_delete_days" min="1"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>

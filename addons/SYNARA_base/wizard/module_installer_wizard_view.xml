@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_synara_module_installer_wizard_form" model="ir.ui.view">
+        <field name="name">synara.module.installer.wizard.form</field>
+        <field name="model">synara.module.installer.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Install Modules from Excel">
+                <field name="state" invisible="1"/>
+                <group invisible="state != 'draft'">
+                    <field name="excel_file" filename="file_name"/>
+                    <field name="file_name" invisible="1"/>
+                </group>
+                <group invisible="state != 'review'">
+                    <div class="alert alert-warning" role="alert" invisible="state != 'review'">
+                        <strong>Important:</strong>
+                        <ul>
+                            <li>The server <strong>will restart</strong> during installation. You will see a "Connection Lost" message.</li>
+                            <li><strong>This is normal.</strong> Wait 1 minute and reload the page.</li>
+                            <li>There is no final report after restart. <strong>This list is your final confirmation.</strong></li>
+                        </ul>
+                    </div>
+                    <field name="line_ids" readonly="1"/>
+                </group>
+                <footer>
+                    <button name="action_analyze_file" string="Analyze" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_generate_report" string="Generate Report &amp; Review" type="object" class="btn-primary" invisible="state != 'review'"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_synara_module_installer_line_tree" model="ir.ui.view">
+        <field name="name">synara.module.installer.line.list</field>
+        <field name="model">synara.module.installer.line</field>
+        <field name="arch" type="xml">
+            <list decoration-success="status == 'installed'" decoration-info="status == 'to_install'" decoration-danger="status == 'missing'">
+                <field name="name"/>
+                <field name="status" widget="badge" decoration-success="status == 'installed'" decoration-info="status == 'to_install'" decoration-danger="status == 'missing'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_synara_module_installer_wizard" model="ir.actions.act_window">
+        <field name="name">Install Modules (XLSX)</field>
+        <field name="res_model">synara.module.installer.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_synara_base_root"
+              name="SYNARA"
+              web_icon="SYNARA_base,static/description/icon.png"
+              sequence="1"/>
+
+    <menuitem id="menu_synara_module_installer"
+              name="Install Modules (XLSX)"
+              parent="menu_synara_base_root"
+              action="action_synara_module_installer_wizard"
+              sequence="10"/>
+</odoo>

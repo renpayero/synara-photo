@@ -1,0 +1,12 @@
+<odoo>
+  <data>
+    <record id="action_fotoapp_statement_export_xlsx" model="ir.actions.server">
+      <field name="name">Exportar XLSX</field>
+      <field name="model_id" ref="model_fotoapp_photographer_statement"/>
+      <field name="binding_model_id" ref="model_fotoapp_photographer_statement"/>
+      <field name="binding_type">action</field>
+      <field name="state">code</field>
+      <field name="code">action = env['fotoapp.photographer.statement']._action_export_xlsx(context.get('active_ids'), context.get('active_domain'))</field>
+    </record>
+  </data>
+</odoo>

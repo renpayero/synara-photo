@@ -1,0 +1,28 @@
+# Archivos de sistema
+*.swp
+*.swo
+*.bak
+.DS_Store
+*.pyc
+__pycache__/
+
+# Configuración de entorno local
+.env
+*.log
+*.db
+*.sqlite
+*.egg-info/
+
+# Archivos de Odoo
+*.zip
+*.tgz
+*.tar.gz
+
+# Archivos de test o pruebas
+.idea/
+.vscode/
+*.iml
+.nodemonignore
+npm-debug.log
+coverage/
+htmlcov/
