@@ -5,7 +5,8 @@
             <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" id="accept_terms" name="accept_terms" required="required"/>
                 <label class="form-check-label" for="accept_terms">
-                    <span t-esc="_('I accept the')"/> <a href="/terms" target="_blank">Términos y Condiciones</a>
+                    <span t-translate="on">Acepto los</span>
+                    <a href="/terms" target="_blank">Términos y Condiciones</a>
                 </label>
             </div>
         </xpath>

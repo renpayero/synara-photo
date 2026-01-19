@@ -25,6 +25,7 @@
                       </span>
                       <span class="text-muted">/mes</span>
                     </div>
+                    <div class="text-muted small mb-2">Valores sin IVA.</div>
                     <ul class="list-unstyled small text-muted mb-4">
                       <li>
                         <i class="fa fa-check text-success me-2"/>Límite almacenamiento: <t t-esc="plan.storage_limit_mb or int((plan.storage_limit_gb or 0.0) * 1024)"/> MB

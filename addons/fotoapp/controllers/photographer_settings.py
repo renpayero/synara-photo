@@ -174,6 +174,33 @@ class PhotographerSettingsController(PhotographerPortalMixin, http.Controller):
         request.session['fotoapp_profile_flash'] = '¡Tu cuenta de Mercado Pago quedó conectada!'
         return request.redirect('/mi/fotoapp/perfil')
 
+    @http.route(
+        ['/mi/fotoapp/mercadopago/desconectar'],
+        type='http',
+        auth='user',
+        website=True,
+        methods=['GET', 'POST']
+    )
+    def mercadopago_disconnect(self, **post):
+        partner, denied = self._ensure_photographer()
+        if not partner:
+            return denied
+
+        # Si llega por GET, simplemente redirigimos para evitar 404 manuales.
+        if request.httprequest.method != 'POST':
+            return request.redirect('/mi/fotoapp/perfil')
+
+        partner.sudo().write({
+            'mp_access_token': False,
+            'mp_refresh_token': False,
+            'mp_user_id': False,
+            'mp_account_email': False,
+            'mp_token_expires_at': False,
+            'mp_account_status': 'not_connected',
+        })
+        request.session['fotoapp_profile_flash'] = 'Se desvinculó tu cuenta de Mercado Pago.'
+        return request.redirect('/mi/fotoapp/perfil')
+
     def _prepare_profile_update(self, partner, payload, profile_fields):
         errors = []
         update_vals = {}

@@ -252,6 +252,12 @@
                             <t t-if="partner.mp_account_status == 'connected'">Actualizar conexión</t>
                             <t t-else="">Conectar con Mercado Pago</t>
                           </a>
+                          <t t-if="partner.mp_account_status == 'connected'">
+                            <form action="/mi/fotoapp/mercadopago/desconectar" method="post" class="d-inline">
+                              <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                              <button type="submit" class="btn btn-outline-danger">Desvincular cuenta</button>
+                            </form>
+                          </t>
                           <span t-if="not connect_url" class="text-muted">Configura el Client ID y Secret para habilitar la conexión.</span>
                         </div>
                       </t>
