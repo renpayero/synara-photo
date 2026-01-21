@@ -29,6 +29,10 @@ class FotoappGalleryController(http.Controller):
             ('is_private', '=', False),
         ], order='create_date desc')
 
+    @http.route(['/'], type='http', auth='public', website=True)
+    def index(self, **kwargs):
+        return request.redirect('/galeria')
+
     @http.route(['/galeria'], type='http', auth='public', website=True)
     def gallery_home(self, **kwargs):
         top_categories = self._get_categories(limit=6, order_by_popularity=True)
